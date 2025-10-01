@@ -1,0 +1,106 @@
+package com.brokerx.auth_service.infrastructure.config;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.security.Keys;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
+
+import java.io.IOException;
+import java.util.List;
+@Slf4j
+@Component
+public class GatewayHeaderAuthenticationFilter extends OncePerRequestFilter {
+
+    @Value("${gateway.secret}")
+    private String gatewaySecret;
+
+    private static final String USER_ID_HEADER = "X-User-Id";
+    private static final String USER_EMAIL_HEADER = "X-User-Email";
+    private static final String USER_ROLE_HEADER = "X-User-Role";
+    private static final String SIGNATURE_HEADER = "X-Gateway-Secret";
+
+
+
+    @Override
+    protected void doFilterInternal(
+            @NonNull HttpServletRequest request,
+            @NonNull HttpServletResponse response,
+            @NonNull FilterChain filterChain) throws ServletException, IOException {
+
+        // Extract the headers added by the Gateway
+        String userId = request.getHeader(USER_ID_HEADER);
+        String email = request.getHeader(USER_EMAIL_HEADER);
+        String role = request.getHeader(USER_ROLE_HEADER);
+        String signature = request.getHeader(SIGNATURE_HEADER);
+
+        if (!validateSignature(signature, userId, email, role)) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            response.getWriter().write("{\"error\":\"Unauthorized access\"}");
+            return;
+        }
+
+        // If the headers are present, the Gateway has validated the JWT
+        if (userId != null && email != null && role != null) {
+            
+            // Create authorities based on the role
+            var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+            
+            var authentication = new UsernamePasswordAuthenticationToken(
+                email,  // Principal = email
+                null,   // No credentials needed
+                authorities
+            );
+            
+            // Add userId as details
+            authentication.setDetails(userId);
+            
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            
+            log.debug("Authentication set from Gateway headers: userId={}, email={}, role={}", 
+                userId, email, role);
+        }
+
+        filterChain.doFilter(request, response);
+    }
+
+    @Override
+    protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
+        String path = request.getServletPath();
+        
+        // Don't filter public paths
+        return path.startsWith("/api/auth/login") ||
+               path.startsWith("/api/auth/register") ||
+               path.startsWith("/api/auth/verify-otp") ||
+               path.startsWith("/api/auth/refresh") ||
+               path.startsWith("/v3/api-docs") ||
+               path.startsWith("/swagger-ui");
+    }
+
+    private boolean validateSignature(String signature, String userId, String email, String role) {
+        try {
+            Claims claims = Jwts.parser()
+                .verifyWith(Keys.hmacShaKeyFor(gatewaySecret.getBytes()))
+                .build()
+                .parseSignedClaims(signature)
+                .getPayload();
+            
+            String data = claims.get("data", String.class);
+            return data.startsWith(userId + ":" + email + ":" + role);
+        } catch (Exception e) {
+            log.error("Invalid gateway signature", e);
+            return false;
+        }
+    }
+}
