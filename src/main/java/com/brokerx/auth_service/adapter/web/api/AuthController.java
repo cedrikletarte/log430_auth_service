@@ -70,8 +70,8 @@ public class AuthController {
                         HttpServletRequest request,
                         HttpServletResponse response) {
 
-                String ipAddress = request.getRemoteAddr();
-                String userAgent = request.getHeader("User-Agent");
+                String ipAddress = request.getHeader("X-Client-Real-IP");
+                String userAgent = request.getHeader("X-Client-User-Agent");
 
                 LoginCommand loginCommand = LoginCommand.builder()
                                 .email(body.getEmail())
@@ -107,8 +107,9 @@ public class AuthController {
         public ResponseEntity<ApiResponse<LoginSuccess>> verifyOtp(@RequestBody VerifyOtpRequest body,
                         HttpServletRequest request,
                         HttpServletResponse response) {
-                String ipAddress = request.getRemoteAddr();
-                String userAgent = request.getHeader("User-Agent");
+
+                String ipAddress = request.getHeader("X-Client-Real-IP");
+                String userAgent = request.getHeader("X-Client-User-Agent");
 
                 OtpCommand otpCommand = OtpCommand.builder()
                                 .email(body.getEmail())
@@ -230,8 +231,8 @@ public class AuthController {
                                         .body(resp);
                 }
 
-                String ipAddress = request.getRemoteAddr();
-                String userAgent = request.getHeader("User-Agent");
+                String ipAddress = request.getHeader("X-Client-Real-IP");
+                String userAgent = request.getHeader("X-Client-User-Agent");
 
                 LoginSuccess loginSuccess = refreshTokenUserUseCase.refreshToken(refreshToken);
 
