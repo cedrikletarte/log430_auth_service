@@ -179,24 +179,15 @@ public class AuthController {
          * Logs out a user by revoking their refresh token and clearing authentication cookies.
          */
         @PostMapping("/logout")
-                public ResponseEntity<ApiResponse<Map<String, String>>> logout(
+        public ResponseEntity<ApiResponse<Map<String, String>>> logout(
                         @CookieValue(required = true) String refreshToken,
                         HttpServletRequest request,
                         HttpServletResponse response) {
 
-                String userId = request.getHeader("X-User-Id");
-                String email = request.getHeader("X-User-Email");
-                
-                if (userId == null || email == null) {
-                        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(new ApiResponse<>("ERROR", "UNAUTHORIZED", 
-                                "Authentication required", null));
-                }
-
                 try {
                         logoutUserUseCase.logout(refreshToken);
                 } catch (Exception e) {
-                        log.error("Logout failed for user {}", userId, e);
+                        log.error("Logout failed", e);
                 }
 
                 ResponseCookie clearRefreshToken = ResponseCookie.from("refreshToken", "")

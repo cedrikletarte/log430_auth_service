@@ -84,6 +84,7 @@ public class GatewayHeaderAuthenticationFilter extends OncePerRequestFilter {
                path.startsWith("/api/auth/register") ||
                path.startsWith("/api/auth/verify-otp") ||
                path.startsWith("/api/auth/refresh") ||
+               path.startsWith("/api/auth/logout") ||
                path.startsWith("/v3/api-docs") ||
                path.startsWith("/swagger-ui");
     }
