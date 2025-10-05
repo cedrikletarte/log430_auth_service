@@ -1,35 +1,8 @@
 services:
 
-  auth_postgres:
-    image: postgres:17
-    container_name: auth_postgres
-    restart: always
-    shm_size: 128mb
-    environment:
-      POSTGRES_USER: ${SPRING_DATASOURCE_USERNAME}
-      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      POSTGRES_DB: postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - auth_postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres || exit 1"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
-
-  auth_redis:
-    image: redis:7.4
-    container_name: auth_redis
-    restart: always
-    ports:
-      - "6379:6379"
-    command: [
-      "redis-server",
-      "--save", "",
-      "--appendonly", "no"
-    ]
+  # ============================================
+  # 🔐 AUTH SERVICE
+  # ============================================
 
   auth_service:
     build: .
@@ -39,8 +12,8 @@ services:
         condition: service_healthy
       auth_redis:
         condition: service_healthy
-    ports:
-      - "8081:8081"
+    expose:
+      - "8080"
     environment:
       SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
@@ -49,6 +22,62 @@ services:
       SPRING_MAIL_USERNAME: ${SPRING_MAIL_USERNAME}
       SPRING_MAIL_PASSWORD: ${SPRING_MAIL_PASSWORD}
     restart: always
+    networks:
+      - brokerx-network
+
+  auth_postgres:
+    image: postgres:17
+    container_name: auth_postgres
+    restart: always
+    shm_size: 128mb
+    environment:
+      POSTGRES_USER: ${SPRING_DATASOURCE_USERNAME}
+      POSTGRES_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      POSTGRES_DB: postgres
+    expose:
+      - "5432"
+    volumes:
+      - auth_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - brokerx-network
+
+  auth_redis:
+    image: redis:7.4
+    container_name: auth_redis
+    restart: always
+    expose:
+      - "6379"
+    command: [
+      "redis-server",
+      "--save", "",
+      "--appendonly", "no"
+    ]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - brokerx-network
+
+
+# ============================================
+# 🌐 NETWORKS
+# ============================================
+
+networks:
+  brokerx-network:
+    external: true
+    name: brokerx-network
+
+# ============================================
+# 💾 VOLUMES
+# ============================================
 
 volumes:
   auth_postgres_data:
