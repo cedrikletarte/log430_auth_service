@@ -46,7 +46,6 @@ public class AuthController {
         private final LogoutUserUseCase logoutUserUseCase;
         private final RefreshTokenUserUseCase refreshTokenUserUseCase;
         private final OtpUseCase otpUseCase;
-
         
         /**
          * Constructs a new AuthController with the required use cases for authentication operations.
