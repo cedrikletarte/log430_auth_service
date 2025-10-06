@@ -22,12 +22,14 @@ jobs:
       - name: Pull new images
         run: docker compose pull || true
 
+      - name: Create environment file
+        run: |
+          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" > .env
+          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "GATEWAY_SECRET=${{ secrets.GATEWAY_SECRET }}" >> .env
+          echo "SPRING_MAIL_USERNAME=${{ secrets.SPRING_MAIL_USERNAME }}" >> .env
+          echo "SPRING_MAIL_PASSWORD=${{ secrets.SPRING_MAIL_PASSWORD }}" >> .env
+
       - name: Start Docker services
-        env:
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          GATEWAY_SECRET: ${{ secrets.GATEWAY_SECRET }}
-          SPRING_MAIL_USERNAME: ${{ secrets.SPRING_MAIL_USERNAME }}
-          SPRING_MAIL_PASSWORD: ${{ secrets.SPRING_MAIL_PASSWORD }}
         run: docker compose up -d --build
