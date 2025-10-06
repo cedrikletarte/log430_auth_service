@@ -14,8 +14,6 @@ services:
         condition: service_healthy
     expose:
       - "8080"
-    env_file:
-      - .env
     restart: always
     networks:
       - brokerx-network
