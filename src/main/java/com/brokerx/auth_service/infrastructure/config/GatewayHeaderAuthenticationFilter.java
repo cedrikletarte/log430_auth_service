@@ -23,7 +23,7 @@ import java.util.List;
 @Component
 public class GatewayHeaderAuthenticationFilter extends OncePerRequestFilter {
 
-    @Value("${gateway.secret}")
+    //@Value("${gateway.secret}")
     private String gatewaySecret;
 
     private static final String USER_ID_HEADER = "X-User-Id";
