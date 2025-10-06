@@ -23,11 +23,11 @@ jobs:
         run: docker compose pull || true
 
       - name: Start Docker services
-        env:
-          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
-          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          GATEWAY_SECRET: ${{ secrets.GATEWAY_SECRET }}
-          SPRING_MAIL_USERNAME: ${{ secrets.SPRING_MAIL_USERNAME }}
-          SPRING_MAIL_PASSWORD: ${{ secrets.SPRING_MAIL_PASSWORD }}
-        run: docker compose up -d --build
+        run: |
+          export SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}"
+          export SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}"
+          export JWT_SECRET="${{ secrets.JWT_SECRET }}"
+          export GATEWAY_SECRET="${{ secrets.GATEWAY_SECRET }}"
+          export SPRING_MAIL_USERNAME="${{ secrets.SPRING_MAIL_USERNAME }}"
+          export SPRING_MAIL_PASSWORD="${{ secrets.SPRING_MAIL_PASSWORD }}"
+          docker compose up -d --build
