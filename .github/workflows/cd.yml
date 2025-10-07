@@ -33,4 +33,4 @@ jobs:
         run: |
           echo "Starting Docker services with environment variables..."
           printenv | grep -E "(SPRING_|JWT_|GATEWAY_)" | wc -l
-          docker compose up -d --build
+          docker compose up -d --build --no-cache
