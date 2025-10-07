@@ -181,7 +181,7 @@ public class AuthController {
          */
         @PostMapping("/logout")
         public ResponseEntity<ApiResponse<Map<String, String>>> logout(
-                        @CookieValue(required = true) String refreshToken,
+                        @CookieValue(required = false) String refreshToken,
                         HttpServletRequest request,
                         HttpServletResponse response) {
 
@@ -210,7 +210,7 @@ public class AuthController {
          */
         @PostMapping("/refresh")
         public ResponseEntity<ApiResponse<LoginSuccess>> refresh(
-                        @CookieValue(required = true) String refreshToken,
+                        @CookieValue(required = false) String refreshToken,
                         HttpServletRequest request) {
                 if (refreshToken == null || refreshToken.isEmpty()) {
                         ApiResponse<LoginSuccess> resp = new ApiResponse<>(

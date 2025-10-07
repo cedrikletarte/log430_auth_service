@@ -4,6 +4,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.brokerx.auth_service.adapter.web.dto.ApiResponse;
 import com.brokerx.auth_service.domain.exception.user.UserException;
@@ -12,6 +14,8 @@ import com.brokerx.auth_service.domain.exception.otpCode.OtpException;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final Logger logger = LogManager.getLogger(GlobalExceptionHandler.class);
 
     /**
      * Handles IllegalArgumentException by returning a JSON error response.
@@ -78,8 +82,8 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
-        // Log l'erreur pour le debugging
-        System.err.println("ALLO");
+        logger.error("Unexpected error occurred: {}", ex.getMessage(), ex);
+        
         return ResponseEntity
             .status(HttpStatus.INTERNAL_SERVER_ERROR)
             .body(new ApiResponse<>(

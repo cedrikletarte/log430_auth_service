@@ -8,6 +8,8 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.brokerx.auth_service.application.port.in.command.login.LoginSuccess;
 import com.brokerx.auth_service.application.port.in.command.refresh.RefreshSuccess;
@@ -27,6 +29,8 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class RefreshTokenService implements RefreshTokenUserUseCase {
+
+    private static final Logger logger = LogManager.getLogger(RefreshTokenService.class);
 
     @Value("${refresh.token.expiration.days}")
     private long refreshTokenDurationDays;
@@ -79,16 +83,21 @@ public class RefreshTokenService implements RefreshTokenUserUseCase {
     @Transactional
     public LoginSuccess refreshToken(String refreshToken) {
         RefreshToken token = refreshTokenRepository.findByToken(refreshToken)
-                .orElseThrow(() -> RefreshTokenException.notFound(refreshToken));
-                
+                .orElseThrow(() -> {
+                    logger.warn("Refresh token not found or invalid");
+                    return RefreshTokenException.notFound(refreshToken);
+                });
 
         User user = token.getUser();
 
         if (user.getStatus().equals(UserStatus.SUSPENDED)) {
+            logger.warn("Refresh token denied - User suspended: {}", user.getEmail());
             throw UserException.notActive(user.getId(), user.getStatus().name());
         }
 
         String accessToken = jwtService.generateToken(user);
+        
+        logger.info("Token refreshed successfully for user: {}", user.getEmail());
 
         return LoginSuccess.builder()
                 .email(user.getEmail())
@@ -99,13 +108,15 @@ public class RefreshTokenService implements RefreshTokenUserUseCase {
     }
 
     /**
-     * Revokes a refresh token and links it to the replacement token.
+     * Revokes a refresh token and optionally links it to the replacement token.
+     * For manual revocations (logout), replacedBy can be null.
+     * For token rotation, replacedBy should reference the new token.
      */
     @Transactional
     public void revoke(RefreshToken token, RefreshToken replacedBy) {
         token.setRevoked(true);
         token.setReplacedBy(replacedBy);
-        RefreshTokenValidator.validateForRevocation(token);
+        RefreshTokenValidator.validateForRevocation(token, replacedBy != null);
         refreshTokenRepository.save(token);
     }
 

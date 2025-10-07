@@ -60,16 +60,17 @@ public class RefreshTokenValidator {
     }
 
     /**
-     * Validates that a refresh token is properly configured for revocation with required replacement reference.
+     * Validates that a refresh token is properly configured for revocation.
+     * ReplacedBy can be null for manual revocations (e.g., logout) but must be set for token rotation.
      */
-    public static void validateForRevocation(RefreshToken refreshToken) {
+    public static void validateForRevocation(RefreshToken refreshToken, boolean requireReplacement) {
         if (refreshToken == null) {
             throw RefreshTokenException.invalidData("refreshToken", "Refresh token object is required");
         }
         if (!refreshToken.isRevoked()) {
             throw RefreshTokenException.invalidData("revoked", "Revoked must be true when revoking");
         }
-        if (refreshToken.getReplacedBy() == null) {
+        if (requireReplacement && refreshToken.getReplacedBy() == null) {
             throw RefreshTokenException.invalidData("replacedBy",
                     "ReplacedBy must reference the new token when revoking");
         }

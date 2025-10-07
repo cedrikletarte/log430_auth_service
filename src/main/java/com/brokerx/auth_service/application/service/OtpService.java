@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.beans.factory.annotation.Value;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import com.brokerx.auth_service.application.port.in.command.login.LoginSuccess;
 import com.brokerx.auth_service.application.port.in.command.otp.OtpCommand;
@@ -26,6 +28,8 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class OtpService implements OtpUseCase {
 
+    private static final Logger logger = LogManager.getLogger(OtpService.class);
+
     @Value("${otp.expires.in.seconds}")
     private int otpExpiresInSeconds;
 
@@ -43,6 +47,7 @@ public class OtpService implements OtpUseCase {
     @Transactional
     public void sendOtp(User user) {
         if (otpCache.hasOtp(user.getEmail())) {
+            logger.info("OTP already exists for user: {}", user.getEmail());
             return;
         }
 
@@ -50,11 +55,14 @@ public class OtpService implements OtpUseCase {
         String code = String.format("%06d", secureRandom.nextInt(1_000_000));
         otpCache.storeOtp(user.getEmail(), code, Duration.ofSeconds(otpExpiresInSeconds));
 
+        logger.info("OTP generated and stored for user: {}", user.getEmail());
+
         // Send email after commit
         TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
             @Override
             public void afterCommit() {
                 emailService.sendOtp(user.getEmail(), code);
+                logger.info("OTP email sent to: {}", user.getEmail());
             }
         });
     }
@@ -65,13 +73,22 @@ public class OtpService implements OtpUseCase {
     @Override
     @Transactional
     public LoginSuccess verifyOtp(OtpCommand request, String ipAddress, String userAgent) {
+        logger.info("OTP verification attempt for email: {}", request.getEmail());
+        
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> UserException.notFound(request.getEmail()));
+                .orElseThrow(() -> {
+                    logger.warn("OTP verification failed - User not found: {}", request.getEmail());
+                    return UserException.notFound(request.getEmail());
+                });
 
         String storedOtp = otpCache.getOtp(request.getEmail())
-                .orElseThrow(() -> OtpException.notFound(request.getEmail(), request.getCode()));
+                .orElseThrow(() -> {
+                    logger.warn("OTP verification failed - OTP not found or expired for: {}", request.getEmail());
+                    return OtpException.notFound(request.getEmail(), request.getCode());
+                });
 
         if (!storedOtp.equals(request.getCode())) {
+            logger.warn("OTP verification failed - Invalid code for: {}", request.getEmail());
             throw OtpException.notFound(request.getEmail(), request.getCode());
         }
 
@@ -82,6 +99,8 @@ public class OtpService implements OtpUseCase {
         UserDomainValidator.validateForUpdate(user);
 
         var updatedUser = userRepository.save(user);
+        
+        logger.info("OTP verified successfully, user activated: {}", updatedUser.getEmail());
 
         return buildAuthResponse(updatedUser, ipAddress, userAgent);
     }

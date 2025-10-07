@@ -14,11 +14,15 @@ import jakarta.transaction.Transactional;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.time.LocalDate;
 
 @Service
 public class RegisterUserService implements RegisterUserUseCase {
+
+    private static final Logger logger = LogManager.getLogger(RegisterUserService.class);
 
     private final UserRepositoryPort userRepositoryPort;
     private final OtpService otpService;
@@ -41,8 +45,11 @@ public class RegisterUserService implements RegisterUserUseCase {
     @Override
     @Transactional
     public RegisterSuccess register(RegisterCommand request) {
+        logger.info("Registration attempt for email: {}", request.getEmail());
+        
         String normalizedEmail = request.getEmail() == null ? null : request.getEmail().toLowerCase();
         if (userRepositoryPort.existsByEmail(normalizedEmail)) {
+            logger.warn("Registration failed - Email already exists: {}", normalizedEmail);
             throw UserException.alreadyExists(normalizedEmail);
         }
 
@@ -69,6 +76,8 @@ public class RegisterUserService implements RegisterUserUseCase {
         User user = toValidate;
 
         var savedUser = userRepositoryPort.save(user);
+        
+        logger.info("User registered successfully: {}", savedUser.getEmail());
 
         otpService.sendOtp(savedUser);
 

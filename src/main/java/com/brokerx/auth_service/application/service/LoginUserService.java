@@ -10,9 +10,13 @@ import com.brokerx.auth_service.domain.model.UserStatus;
 import com.brokerx.auth_service.application.port.out.AuthenticatorPort;
 
 import org.springframework.stereotype.Service;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Service
 public class LoginUserService implements LoginUserUseCase {
+
+    private static final Logger logger = LogManager.getLogger(LoginUserService.class);
 
     private final UserRepositoryPort userRepository;
 
@@ -37,10 +41,16 @@ public class LoginUserService implements LoginUserUseCase {
      */
     @Override
     public LoginSuccess login(LoginCommand loginCommand, String ipAddress, String userAgent) {
+        logger.info("Login attempt for email: {}", loginCommand.getEmail());
+        
         User user = userRepository.findByEmail(loginCommand.getEmail().toLowerCase())
-                .orElseThrow(() -> UserException.notFound(loginCommand.getEmail()));
+                .orElseThrow(() -> {
+                    logger.warn("Login failed - User not found: {}", loginCommand.getEmail());
+                    return UserException.notFound(loginCommand.getEmail());
+                });
 
         if (user.getStatus() == UserStatus.PENDING) {
+            logger.info("User pending verification, sending OTP: {}", user.getEmail());
             otpService.sendOtp(user);
 
             return LoginSuccess.builder()
@@ -52,12 +62,15 @@ public class LoginUserService implements LoginUserUseCase {
                     .build();
         }
         if (user.getStatus().equals(UserStatus.SUSPENDED)) {
+            logger.warn("Login failed - User suspended: {}", user.getEmail());
             throw UserException.notActive(user.getId(), user.getStatus().name());
         }
 
         authenticator.authenticate(loginCommand.getEmail(), loginCommand.getPassword());
         String accessToken = jwtService.generateToken(user);
 
+        logger.info("Login successful for user: {}", user.getEmail());
+        
         return LoginSuccess.builder()
                 .email(user.getEmail())
                 .firstname(user.getFirstname())
