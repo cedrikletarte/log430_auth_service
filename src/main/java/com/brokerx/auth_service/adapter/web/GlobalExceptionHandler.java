@@ -1,31 +1,91 @@
 package com.brokerx.auth_service.adapter.web;
 
-import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.brokerx.auth_service.adapter.web.dto.ApiResponse;
 import com.brokerx.auth_service.domain.exception.user.UserException;
 import com.brokerx.auth_service.domain.exception.refreshToken.RefreshTokenException;
 import com.brokerx.auth_service.domain.exception.otpCode.OtpException;
 
-@ControllerAdvice
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
     /**
-     * Handles IllegalArgumentException by adding error message to flash attributes and redirecting to dashboard.
+     * Handles IllegalArgumentException by returning a JSON error response.
      */
     @ExceptionHandler(IllegalArgumentException.class)
-    public String handleIllegalArgument(IllegalArgumentException ex, RedirectAttributes ra) {
-        ra.addFlashAttribute("errorMessage", ex.getMessage());
-        return "redirect:/dashboard/home";
+    public ResponseEntity<ApiResponse<Void>> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity
+            .badRequest()
+            .body(new ApiResponse<>(
+                "ERROR",
+                "INVALID_ARGUMENT",
+                ex.getMessage(),
+                null
+            ));
     }
 
     /**
-     * Handles domain-specific exceptions by adding error message to flash attributes and redirecting to dashboard.
+     * Handles UserException by returning a JSON error response.
      */
-    @ExceptionHandler({ UserException.class, RefreshTokenException.class, OtpException.class })
-    public String handleDomainExceptions(RuntimeException ex, RedirectAttributes ra) {
-        ra.addFlashAttribute("errorMessage", ex.getMessage());
-        return "redirect:/dashboard/home";
+    @ExceptionHandler(UserException.class)
+    public ResponseEntity<ApiResponse<Void>> handleUserException(UserException ex) {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(new ApiResponse<>(
+                "ERROR",
+                "USER_ERROR",
+                ex.getMessage(),
+                null
+            ));
+    }
+
+    /**
+     * Handles RefreshTokenException by returning a JSON error response.
+     */
+    @ExceptionHandler(RefreshTokenException.class)
+    public ResponseEntity<ApiResponse<Void>> handleRefreshTokenException(RefreshTokenException ex) {
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(new ApiResponse<>(
+                "ERROR",
+                "REFRESH_TOKEN_ERROR",
+                ex.getMessage(),
+                null
+            ));
+    }
+
+    /**
+     * Handles OtpException by returning a JSON error response.
+     */
+    @ExceptionHandler(OtpException.class)
+    public ResponseEntity<ApiResponse<Void>> handleOtpException(OtpException ex) {
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(new ApiResponse<>(
+                "ERROR",
+                "OTP_ERROR",
+                ex.getMessage(),
+                null
+            ));
+    }
+
+    /**
+     * Catches any other unexpected exceptions.
+     */
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
+        // Log l'erreur pour le debugging
+        return ResponseEntity
+            .status(HttpStatus.INTERNAL_SERVER_ERROR)
+            .body(new ApiResponse<>(
+                "ERROR",
+                "INTERNAL_ERROR",
+                "An unexpected error occurred",
+                null
+            ));
     }
 }
