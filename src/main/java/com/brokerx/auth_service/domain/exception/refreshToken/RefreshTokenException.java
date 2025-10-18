@@ -1,14 +1,15 @@
 package com.brokerx.auth_service.domain.exception.refreshToken;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 
 public class RefreshTokenException extends RuntimeException {
     private final String code; // REFRESH_INVALID_DATA, REFRESH_INVALID_FORMAT, REFRESH_NOT_FOUND, REFRESH_EXPIRED, REFRESH_REVOKED
     private final String field;
     private final String value;
-    private final Instant expiryDate;
+    private final LocalDateTime expiryDate;
 
-    private RefreshTokenException(String code, String field, String value, String message, Instant expiryDate) {
+    private RefreshTokenException(String code, String field, String value, String message, LocalDateTime expiryDate) {
         super(message);
         this.code = code;
         this.field = field;
@@ -31,7 +32,7 @@ public class RefreshTokenException extends RuntimeException {
                 "Refresh token not found: " + token, null);
     }
 
-    public static RefreshTokenException expired(String token, Instant expiry) {
+    public static RefreshTokenException expired(String token, LocalDateTime expiry) {
         return new RefreshTokenException("REFRESH_EXPIRED", "token", token,
                 "Refresh token expired at: " + expiry, expiry);
     }
@@ -44,5 +45,5 @@ public class RefreshTokenException extends RuntimeException {
     public String getCode() { return code; }
     public String getField() { return field; }
     public String getValue() { return value; }
-    public Instant getExpiryDate() { return expiryDate; }
+    public LocalDateTime getExpiryDate() { return expiryDate; }
 }

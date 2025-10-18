@@ -20,7 +20,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.time.Duration;
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import org.springframework.http.HttpStatus;
@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
         private static final Logger log = LoggerFactory.getLogger(AuthController.class);
@@ -243,8 +243,8 @@ public class AuthController {
          * Builds a secure HTTP-only cookie containing the refresh token with appropriate security settings.
          */
         private ResponseCookie buildRefreshCookie(RefreshSuccess refreshToken) {
-                Instant expiry = refreshToken.getExpiryDate();
-                long maxAgeSeconds = Duration.between(Instant.now(), expiry).getSeconds();
+                LocalDateTime expiry = refreshToken.getExpiryDate();
+                long maxAgeSeconds = Duration.between(LocalDateTime.now(), expiry).getSeconds();
                 return ResponseCookie.from("refreshToken", refreshToken.getRefreshToken())
                                 .httpOnly(true)
                                 .secure(false) // Set to true in production with HTTPS

@@ -2,6 +2,7 @@ package com.brokerx.auth_service.application.service;
 
 import java.security.SecureRandom;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Base64;
 import java.util.Optional;
@@ -55,11 +56,11 @@ public class RefreshTokenService implements RefreshTokenUserUseCase {
         RefreshToken rt = RefreshToken.builder()
                 .user(user)
                 .token(base64Encoder.encodeToString(randomBytes))
-                .expiryDate(Instant.now().plus(refreshTokenDurationDays, ChronoUnit.DAYS))
+                .expiryDate(LocalDateTime.now().plus(refreshTokenDurationDays, ChronoUnit.DAYS))
                 .isRevoked(false)
                 .ipAddress(ipAddress)
                 .userAgent(userAgent)
-                .createdAt(Instant.now())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         RefreshTokenValidator.validateForCreation(rt);
@@ -131,7 +132,7 @@ public class RefreshTokenService implements RefreshTokenUserUseCase {
      * Verifies that a refresh token is not expired or revoked, throwing exceptions if invalid.
      */
     public void verifyExpiration(RefreshToken token) {
-        if (token.getExpiryDate().isBefore(Instant.now())) {
+        if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
             throw RefreshTokenException.expired(token.getToken(), token.getExpiryDate());
         }
         if (token.isRevoked()) {

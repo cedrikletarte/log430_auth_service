@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -36,7 +36,7 @@ public class RefreshTokenEntity {
     private UserEntity user;
 
     @Column(nullable = false)
-    private Instant expiryDate;
+    private LocalDateTime expiryDate;
 
     @Column(nullable = false)
     @Builder.Default
@@ -46,7 +46,7 @@ public class RefreshTokenEntity {
     @JoinColumn(name = "replaced_by_id")
     private RefreshTokenEntity replacedBy;
 
-    private Instant createdAt;
+    private LocalDateTime createdAt;
 
     private String ipAddress;
     private String userAgent;

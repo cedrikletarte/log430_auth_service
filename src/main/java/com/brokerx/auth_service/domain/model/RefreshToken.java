@@ -5,7 +5,7 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -15,9 +15,9 @@ public class RefreshToken {
     private Long id;
     private String token;
     private User user;
-    private Instant expiryDate;
+    private LocalDateTime expiryDate;
     private RefreshToken replacedBy;
-    private Instant createdAt;
+    private LocalDateTime createdAt;
     private String ipAddress;
     private String userAgent;
 

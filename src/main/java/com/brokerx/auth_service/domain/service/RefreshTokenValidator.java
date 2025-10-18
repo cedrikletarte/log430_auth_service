@@ -6,6 +6,7 @@ import com.brokerx.auth_service.domain.model.RefreshToken;
 import lombok.experimental.UtilityClass;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
 @UtilityClass
@@ -39,7 +40,7 @@ public class RefreshTokenValidator {
             throw RefreshTokenException.invalidFormat("must be base64url (A-Za-z0-9_- with optional '=' padding)");
         }
 
-        Instant now = Instant.now();
+        LocalDateTime now = LocalDateTime.now();
         if (refreshToken.getExpiryDate() == null) {
             throw RefreshTokenException.invalidData("expiryDate", "Expiry date is required");
         }

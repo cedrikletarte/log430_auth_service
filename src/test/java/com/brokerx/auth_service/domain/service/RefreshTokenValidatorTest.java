@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 
 import org.junit.jupiter.api.Test;
 
@@ -28,8 +28,8 @@ class RefreshTokenValidatorTest {
         RefreshToken token = RefreshToken.builder()
                 .token(generateValidToken())
                 .user(user)
-                .createdAt(Instant.now())
-                .expiryDate(Instant.now().plusSeconds(86400))
+                .createdAt(LocalDateTime.now())
+                .expiryDate(LocalDateTime.now().plusSeconds(86400))
                 .build();
         token.setRevoked(false);
         return token;
@@ -135,7 +135,7 @@ class RefreshTokenValidatorTest {
     @Test
     void shouldRejectPastExpiryDate() {
         RefreshToken refreshToken = createValidRefreshToken();
-        refreshToken.setExpiryDate(Instant.now().minusSeconds(3600));
+        refreshToken.setExpiryDate(LocalDateTime.now().minusSeconds(3600));
 
         RefreshTokenException exception = assertThrows(RefreshTokenException.class,
                 () -> RefreshTokenValidator.validateForCreation(refreshToken));
@@ -155,7 +155,7 @@ class RefreshTokenValidatorTest {
     @Test
     void shouldRejectCreatedAtAfterExpiryDate() {
         RefreshToken refreshToken = createValidRefreshToken();
-        Instant now = Instant.now();
+        LocalDateTime now = LocalDateTime.now();
         refreshToken.setCreatedAt(now.plusSeconds(7200));
         refreshToken.setExpiryDate(now.plusSeconds(3600));
 

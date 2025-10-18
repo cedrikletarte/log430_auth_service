@@ -78,6 +78,21 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Handles IllegalStateException by returning a JSON error response.
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiResponse<Void>> handleIllegalState(IllegalStateException ex) {
+        return ResponseEntity
+            .status(HttpStatus.CONFLICT)
+            .body(new ApiResponse<>(
+                "ERROR",
+                "ILLEGAL_STATE",
+                ex.getMessage(),
+                null
+            ));
+    }
+
+    /**
      * Catches any other unexpected exceptions.
      */
     @ExceptionHandler(Exception.class)
