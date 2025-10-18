@@ -1,6 +1,5 @@
 package com.brokerx.auth_service.domain.exception.refreshToken;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 
 public class RefreshTokenException extends RuntimeException {

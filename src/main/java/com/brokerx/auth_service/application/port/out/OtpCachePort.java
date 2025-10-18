@@ -3,10 +3,6 @@ package com.brokerx.auth_service.application.port.out;
 import java.time.Duration;
 import java.util.Optional;
 
-/**
- * Port for OTP caching operations.
- * Abstracts the caching mechanism from the application layer.
- */
 public interface OtpCachePort {
     
     /**
