@@ -58,14 +58,14 @@ public class JwtService {
      * Extracts the email address from the JWT token's subject claim.
      */
     public String extractEmail(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return extractClaim(token, claims -> claims.get("email", String.class));
     }
 
     /**
      * Extracts the username from the JWT token's subject claim.
      */
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return extractClaim(token, claims -> claims.get("email", String.class));
     }
 
     /**
@@ -85,7 +85,7 @@ public class JwtService {
                 .claim("lastName", user.getLastname())
                 .claim("role", user.getRole().name())
                 .claim("email", user.getEmail())
-                .subject(user.getEmail())
+                .subject(user.getId().toString())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSignInKey(), Jwts.SIG.HS256)
