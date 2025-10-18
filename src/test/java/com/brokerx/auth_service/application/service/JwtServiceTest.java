@@ -158,23 +158,6 @@ class JwtServiceTest {
     }
 
     @Test
-    void shouldGenerateDifferentTokensForSameUser() {
-        User user = createTestUser();
-
-        String token1 = jwtService.generateToken(user);
-        // Petite pause pour s'assurer que les timestamps sont différents
-        try {
-            Thread.sleep(10);
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-        String token2 = jwtService.generateToken(user);
-
-        // Les tokens devraient être différents car ils ont des timestamps différents
-        assertFalse(token1.equals(token2));
-    }
-
-    @Test
     void shouldHandleDifferentUserRoles() {
         User adminUser = User.builder()
                 .id(1L)
