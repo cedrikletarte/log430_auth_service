@@ -42,11 +42,15 @@ jobs:
         run: |
           docker network ls | grep brokerx-network || docker network create brokerx-network
 
-      - name: Build Docker images
-        run: docker compose build
-
-      - name: Start services
-        run: docker compose up -d
+      - name: Start Docker services
+        env:
+          SPRING_DATASOURCE_USERNAME: ${{ secrets.SPRING_DATASOURCE_USERNAME }}
+          SPRING_DATASOURCE_PASSWORD: ${{ secrets.SPRING_DATASOURCE_PASSWORD }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+          GATEWAY_SECRET: ${{ secrets.GATEWAY_SECRET }}
+          SPRING_MAIL_USERNAME: ${{ secrets.SPRING_MAIL_USERNAME }}
+          SPRING_MAIL_PASSWORD: ${{ secrets.SPRING_MAIL_PASSWORD }}
+        run: docker compose up -d --build
 
       - name: Wait for app health
         run: |
