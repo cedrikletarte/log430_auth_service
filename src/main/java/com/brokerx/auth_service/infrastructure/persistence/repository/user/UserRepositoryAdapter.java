@@ -41,13 +41,26 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
      */
     @Override
     public List<User> saveAll(List<User> users) {
-        List<UserEntity> entities = users.stream()
-                .map(userMapper::toEntity)
-                .toList();
-        List<UserEntity> savedEntities = springUserRepository.saveAll(entities);
-        return savedEntities.stream()
-                .map(userMapper::toDomain)
-                .toList();
+    List<UserEntity> entities = users.stream()
+        .map(userMapper::toEntity)
+        .toList();
+    List<UserEntity> savedEntities = springUserRepository.saveAll(entities);
+    return savedEntities.stream()
+        .map(userMapper::toDomain)
+        .toList();
+    }
+
+    @Override
+    public Optional<User> findById(Long id) {
+    return springUserRepository.findById(id)
+        .map(userMapper::toDomain);
+    }
+
+    @Override
+    public List<User> findAll() {
+    return springUserRepository.findAll().stream()
+        .map(userMapper::toDomain)
+        .toList();
     }
 
     /**
@@ -65,5 +78,20 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
     @Override
     public boolean existsByEmail(String email) {
         return springUserRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsById(Long id) {
+        return springUserRepository.existsById(id);
+    }
+
+    @Override
+    public void deleteById(Long id) {
+        springUserRepository.deleteById(id);
+    }
+
+    @Override
+    public void deleteAll() {
+        springUserRepository.deleteAll();
     }
 }
