@@ -8,6 +8,7 @@ import com.brokerx.auth_service.infrastructure.persistence.mapper.UserMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -33,6 +34,20 @@ public class UserRepositoryAdapter implements UserRepositoryPort {
         UserEntity entity = userMapper.toEntity(user);
         entity = springUserRepository.save(entity);
         return userMapper.toDomain(entity);
+    }
+
+    /**
+     * Persists a list of user domain objects in batch by converting to entities, saving, and converting back to domains.
+     */
+    @Override
+    public List<User> saveAll(List<User> users) {
+        List<UserEntity> entities = users.stream()
+                .map(userMapper::toEntity)
+                .toList();
+        List<UserEntity> savedEntities = springUserRepository.saveAll(entities);
+        return savedEntities.stream()
+                .map(userMapper::toDomain)
+                .toList();
     }
 
     /**
