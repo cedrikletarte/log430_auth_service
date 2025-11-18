@@ -22,12 +22,13 @@ public class UserSeeder {
     private static final Logger log = LoggerFactory.getLogger(UserSeeder.class);
     private static final int TEST_USERS_COUNT = 50;
 
+    /* Seeds the database with an admin user and test users for load testing. */
     @Bean
     CommandLineRunner seedUser(UserRepositoryAdapter userRepository) {
         return args -> {
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
             
-            // 1. Créer l'admin
+            // 1. Create admin user if not exists
             if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
                 User admin = User.builder()
                         .firstname("Admin")
@@ -46,7 +47,7 @@ public class UserSeeder {
                 log.info("✅ Admin user created: {}", admin.getEmail());
             }
 
-            // 2. Créer des utilisateurs de test pour K6
+            // 2. Create test users for K6
             List<User> testUsers = new ArrayList<>();
             for (int i = 1; i <= TEST_USERS_COUNT; i++) {
                 String email = String.format("trader%d@test.com", i);
@@ -56,7 +57,7 @@ public class UserSeeder {
                             .firstname("Trader")
                             .lastname("Test" + i)
                             .email(email)
-                            .password(encoder.encode("Test1234!")) // Même mot de passe pour simplifier
+                            .password(encoder.encode("Test1234!")) // Same password for simplicity
                             .phoneNumber(String.format("+15145550%03d", i))
                             .dateOfBirth(LocalDate.of(1990 + (i % 30), 1 + (i % 12), 1 + (i % 28)))
                             .address(String.format("%d Rue du Commerce", 100 + i))
@@ -70,11 +71,11 @@ public class UserSeeder {
             }
             
             if (!testUsers.isEmpty()) {
-                userRepository.saveAll(testUsers); // Utilise saveAll pour le batching!
-                log.info("✅ Created {} test users (trader1@test.com to trader{}@test.com)", 
+                userRepository.saveAll(testUsers); // Use saveAll for batching
+                log.info("Created {} test users (trader1@test.com to trader{}@test.com)", 
                          testUsers.size(), TEST_USERS_COUNT);
             } else {
-                log.info("ℹ️ Test users already exist");
+                log.info("Test users already exist");
             }
         };
     }

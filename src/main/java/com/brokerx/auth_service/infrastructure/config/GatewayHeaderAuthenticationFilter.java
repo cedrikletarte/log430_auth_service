@@ -33,6 +33,7 @@ public class GatewayHeaderAuthenticationFilter extends OncePerRequestFilter {
 
 
 
+    /* Processes the incoming request to authenticate based on Gateway headers. */
     @Override
     protected void doFilterInternal(
             @NonNull HttpServletRequest request,
@@ -75,6 +76,7 @@ public class GatewayHeaderAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
+    /* Determines if the filter should be applied based on the request path. */
     @Override
     protected boolean shouldNotFilter(@NonNull HttpServletRequest request) {
         String path = request.getServletPath();

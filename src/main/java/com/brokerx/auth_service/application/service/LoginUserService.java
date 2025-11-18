@@ -25,9 +25,7 @@ public class LoginUserService implements LoginUserUseCase {
 
     private final AuthenticatorPort authenticator;
 
-    /**
-     * Constructs a new LoginUserService with required dependencies for user authentication.
-     */
+    /* Constructs a new LoginUserService with required dependencies for user authentication. */
     public LoginUserService(UserRepositoryPort userRepository, JwtService jwtService,
             OtpService otpService, AuthenticatorPort authenticator) {
         this.userRepository = userRepository;
@@ -36,9 +34,7 @@ public class LoginUserService implements LoginUserUseCase {
         this.authenticator = authenticator;
     }
 
-    /**
-     * Authenticates a user with email and password, handling OTP requirements and user status validation.
-     */
+    /* Authenticates a user with email and password, handling OTP requirements and user status validation. */
     @Override
     public LoginSuccess login(LoginCommand loginCommand, String ipAddress, String userAgent) {
         logger.info("Login attempt for email: {}", loginCommand.getEmail());

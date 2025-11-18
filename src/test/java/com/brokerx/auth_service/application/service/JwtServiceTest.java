@@ -77,7 +77,7 @@ class JwtServiceTest {
         User user = createTestUser();
         String token = jwtService.generateToken(user);
 
-        String extractedUsername = jwtService.extractUsername(token);
+        String extractedUsername = jwtService.extractEmail(token);
 
         // Le username devrait être l'email
         assertEquals(user.getEmail(), extractedUsername);
@@ -88,7 +88,7 @@ class JwtServiceTest {
         User user = createTestUser();
         String token = jwtService.generateToken(user);
 
-        boolean isValid = jwtService.isTokenValid(token, user);
+        boolean isValid = jwtService.isTokenValid(token);
 
         assertTrue(isValid);
     }
@@ -106,7 +106,7 @@ class JwtServiceTest {
 
         String token = jwtService.generateToken(user1);
 
-        boolean isValid = jwtService.isTokenValid(token, user2);
+        boolean isValid = jwtService.isTokenValid(token);
 
         assertFalse(isValid);
     }

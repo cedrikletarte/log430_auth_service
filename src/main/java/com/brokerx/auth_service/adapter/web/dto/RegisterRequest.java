@@ -2,6 +2,7 @@ package com.brokerx.auth_service.adapter.web.dto;
 
 import lombok.Data;
 
+/* DTO for user registration requests. */
 @Data
 public class RegisterRequest {
     private String firstName;

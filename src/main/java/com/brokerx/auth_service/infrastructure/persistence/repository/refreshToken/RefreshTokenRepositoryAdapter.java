@@ -22,9 +22,7 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
     private final RefreshTokenMapper refreshTokenMapper;
     private final UserMapper userMapper;
 
-    /**
-     * Constructs a RefreshTokenRepositoryAdapter with Spring repository and mapper dependencies.
-     */
+    /* Constructs a RefreshTokenRepositoryAdapter with Spring repository and mapper dependencies. */
     public RefreshTokenRepositoryAdapter(SpringRefreshTokenRepository springRefreshTokenRepository,
             RefreshTokenMapper refreshTokenMapper,
             UserMapper userMapper) {
@@ -33,9 +31,7 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
         this.userMapper = userMapper;
     }
 
-    /**
-     * Persists a refresh token domain object by converting to entity, saving, and converting back to domain.
-     */
+    /* Persists a refresh token domain object by converting to entity, saving, and converting back to domain. */
     @Override
     public RefreshToken save(RefreshToken token) {
         RefreshTokenEntity entity = refreshTokenMapper.toEntity(token);
@@ -43,18 +39,14 @@ public class RefreshTokenRepositoryAdapter implements RefreshTokenRepositoryPort
         return refreshTokenMapper.toDomain(entity);
     }
 
-    /**
-     * Finds a refresh token by its token string value and converts the entity to domain object if found.
-     */
+    /* Finds a refresh token by its token string value and converts the entity to domain object if found. */
     @Override
     public Optional<RefreshToken> findByToken(String token) {
         return springRefreshTokenRepository.findByToken(token)
                 .map(refreshTokenMapper::toDomain);
     }
 
-    /**
-     * Finds a refresh token for a specific user, IP address, user agent, and revocation status.
-     */
+    /* Finds a refresh token for a specific user, IP address, user agent, and revocation status. */
     @Override
     public Optional<RefreshToken> findByUserAndIpAddressAndUserAgentAndRevoked(User user, String ip, String userAgent,
             boolean revoked) {

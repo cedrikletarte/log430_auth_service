@@ -7,9 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class UserMapper {
 
-    /**
-     * Converts a User domain object to a UserEntity for database persistence.
-     */
+    /* Converts a User domain object to a UserEntity for database persistence. */
     public UserEntity toEntity(User user) {
         if (user == null)
             return null;
@@ -29,9 +27,7 @@ public class UserMapper {
                 .build();
     }
 
-    /**
-     * Converts a UserEntity from database to a User domain object.
-     */
+    /* Converts a UserEntity from database to a User domain object. */
     public User toDomain(UserEntity entity) {
         if (entity == null)
             return null;

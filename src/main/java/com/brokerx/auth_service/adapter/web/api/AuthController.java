@@ -48,9 +48,7 @@ public class AuthController {
         private final OtpUseCase otpUseCase;
         
 
-        /**
-         * Constructs a new AuthController with the required use cases for authentication operations.
-         */
+        /* Constructs a new AuthController with the required use cases for authentication operations. */
         public AuthController(RegisterUserUseCase registerUserUseCase,
                         LoginUserUseCase loginUserUseCase,
                         LogoutUserUseCase logoutUserUseCase,
@@ -63,9 +61,7 @@ public class AuthController {
                 this.otpUseCase = otpUseCase;
         }
 
-        /**
-         * Authenticates a user with email and password, optionally requiring OTP verification.
-         */
+        /* Authenticates a user with email and password, optionally requiring OTP verification. */
         @PostMapping("/login")
         public ResponseEntity<ApiResponse<LoginSuccess>> login(@RequestBody LoginRequest body,
                         HttpServletRequest request,
@@ -101,9 +97,7 @@ public class AuthController {
                                                 loginSuccess));
         }
 
-        /**
-         * Verifies the OTP code sent to user's email during the authentication process.
-         */
+        /* Verifies the OTP code sent to user's email during the authentication process. */
         @PostMapping("/verify-otp")
         public ResponseEntity<ApiResponse<LoginSuccess>> verifyOtp(@RequestBody VerifyOtpRequest body,
                         HttpServletRequest request,
@@ -131,10 +125,7 @@ public class AuthController {
                                                 "OTP verified and login successful",
                                                 loginSuccess));
         }
-
-        /**
-         * Registers a new user account and sends an OTP for email verification.
-         */
+        /* Registers a new user account and sends an OTP for email verification. */
         @PostMapping("/register")
         public ResponseEntity<ApiResponse<RegisterSuccess>> register(@RequestBody RegisterRequest body) {
 
@@ -176,9 +167,7 @@ public class AuthController {
                                                 null));
         }
 
-        /**
-         * Logs out a user by revoking their refresh token and clearing authentication cookies.
-         */
+        /* Logs out a user by revoking their refresh token and clearing authentication cookies. */
         @PostMapping("/logout")
         public ResponseEntity<ApiResponse<Map<String, String>>> logout(
                         @CookieValue(required = false) String refreshToken,
@@ -205,9 +194,7 @@ public class AuthController {
                         "Logout successful", null));
         }
 
-        /**
-         * Refreshes an expired access token using a valid refresh token.
-         */
+        /* Refreshes an expired access token using a valid refresh token. */
         @PostMapping("/refresh")
         public ResponseEntity<ApiResponse<LoginSuccess>> refresh(
                         @CookieValue(required = false) String refreshToken,
@@ -239,9 +226,7 @@ public class AuthController {
                                                 loginSuccess));
         }
 
-        /**
-         * Builds a secure HTTP-only cookie containing the refresh token with appropriate security settings.
-         */
+        /* Builds a secure HTTP-only cookie containing the refresh token with appropriate security settings. */
         private ResponseCookie buildRefreshCookie(RefreshSuccess refreshToken) {
                 LocalDateTime expiry = refreshToken.getExpiryDate();
                 long maxAgeSeconds = Duration.between(LocalDateTime.now(), expiry).getSeconds();

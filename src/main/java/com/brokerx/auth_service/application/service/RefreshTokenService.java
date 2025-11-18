@@ -42,9 +42,7 @@ public class RefreshTokenService implements RefreshTokenUserUseCase {
 
     private static final Base64.Encoder base64Encoder = Base64.getUrlEncoder();
 
-    /**
-     * Creates a new refresh token for the user, revoking any existing token from the same device.
-     */
+    /* Creates a new refresh token for the user, revoking any existing token from the same device. */
     @Transactional
     public RefreshSuccess createRefreshToken(String email, String ipAddress, String userAgent) {
         byte[] randomBytes = new byte[64];
@@ -77,9 +75,7 @@ public class RefreshTokenService implements RefreshTokenUserUseCase {
                 .build();
     }
 
-    /**
-     * Validates a refresh token and generates a new access token for the authenticated user.
-     */
+    /* Validates a refresh token and generates a new access token for the authenticated user. */
     @Transactional
     public LoginSuccess refreshToken(String refreshToken) {
         RefreshToken token = refreshTokenRepository.findByToken(refreshToken)
@@ -120,16 +116,12 @@ public class RefreshTokenService implements RefreshTokenUserUseCase {
         refreshTokenRepository.save(token);
     }
 
-    /**
-     * Finds a refresh token by its token string value.
-     */
+    /* Finds a refresh token by its token string value. */
     public Optional<RefreshToken> findByToken(String token) {
         return refreshTokenRepository.findByToken(token);
     }
 
-    /**
-     * Verifies that a refresh token is not expired or revoked, throwing exceptions if invalid.
-     */
+    /* Verifies that a refresh token is not expired or revoked, throwing exceptions if invalid. */
     public void verifyExpiration(RefreshToken token) {
         if (token.getExpiryDate().isBefore(LocalDateTime.now())) {
             throw RefreshTokenException.expired(token.getToken(), token.getExpiryDate());

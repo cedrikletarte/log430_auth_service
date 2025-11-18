@@ -13,9 +13,7 @@ public class EmailService {
 
     private final JavaMailSender mailSender;
 
-    /**
-     * Asynchronously sends an OTP verification code to the specified email address.
-     */
+    /* Asynchronously sends an OTP verification code to the specified email address. */
     @Async
     public void sendOtp(String to, String code) {
         SimpleMailMessage message = new SimpleMailMessage();

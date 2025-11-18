@@ -17,9 +17,7 @@ public class GlobalExceptionHandler {
 
     private static final Logger logger = LogManager.getLogger(GlobalExceptionHandler.class);
 
-    /**
-     * Handles IllegalArgumentException by returning a JSON error response.
-     */
+    /* Handles IllegalArgumentException by returning a JSON error response. */
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Void>> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity
@@ -32,9 +30,7 @@ public class GlobalExceptionHandler {
             ));
     }
 
-    /**
-     * Handles UserException by returning a JSON error response.
-     */
+    /* Handles UserException by returning a JSON error response. */
     @ExceptionHandler(UserException.class)
     public ResponseEntity<ApiResponse<Void>> handleUserException(UserException ex) {
         return ResponseEntity
@@ -47,9 +43,7 @@ public class GlobalExceptionHandler {
             ));
     }
 
-    /**
-     * Handles RefreshTokenException by returning a JSON error response.
-     */
+    /* Handles RefreshTokenException by returning a JSON error response. */
     @ExceptionHandler(RefreshTokenException.class)
     public ResponseEntity<ApiResponse<Void>> handleRefreshTokenException(RefreshTokenException ex) {
         return ResponseEntity
@@ -62,9 +56,7 @@ public class GlobalExceptionHandler {
             ));
     }
 
-    /**
-     * Handles OtpException by returning a JSON error response.
-     */
+    /* Handles OtpException by returning a JSON error response. */
     @ExceptionHandler(OtpException.class)
     public ResponseEntity<ApiResponse<Void>> handleOtpException(OtpException ex) {
         return ResponseEntity
@@ -77,9 +69,7 @@ public class GlobalExceptionHandler {
             ));
     }
 
-    /**
-     * Handles IllegalStateException by returning a JSON error response.
-     */
+    /* Handles IllegalStateException by returning a JSON error response. */
     @ExceptionHandler(IllegalStateException.class)
     public ResponseEntity<ApiResponse<Void>> handleIllegalState(IllegalStateException ex) {
         return ResponseEntity
@@ -92,9 +82,7 @@ public class GlobalExceptionHandler {
             ));
     }
 
-    /**
-     * Catches any other unexpected exceptions.
-     */
+    /* Catches any other unexpected exceptions. */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGenericException(Exception ex) {
         logger.error("Unexpected error occurred: {}", ex.getMessage(), ex);

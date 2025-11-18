@@ -29,9 +29,7 @@ public class RegisterUserService implements RegisterUserUseCase {
 
     private final PasswordEncoder passwordEncoder;
 
-    /**
-     * Constructs a new RegisterUserService with required dependencies for user registration.
-     */
+    /* Constructs a new RegisterUserService with required dependencies for user registration. */
     public RegisterUserService(UserRepositoryPort userRepositoryPort, OtpService otpService,
             PasswordEncoder passwordEncoder) {
         this.userRepositoryPort = userRepositoryPort;
@@ -39,9 +37,7 @@ public class RegisterUserService implements RegisterUserUseCase {
         this.passwordEncoder = passwordEncoder;
     }
 
-    /**
-     * Registers a new user by validating input data, creating user account, and sending OTP verification.
-     */
+    /* Registers a new user by validating input data, creating user account, and sending OTP verification. */
     @Override
     @Transactional
     public RegisterSuccess register(RegisterCommand request) {

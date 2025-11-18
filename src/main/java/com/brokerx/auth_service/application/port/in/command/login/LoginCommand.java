@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+/* Command object representing a login request with email and password. */
 @Getter
 @Builder
 @AllArgsConstructor

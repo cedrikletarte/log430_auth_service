@@ -19,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+/* Entity representing a user. */
 @Data
 @Builder
 @NoArgsConstructor

@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+/* Command object representing an OTP verification request. */
 @Getter
 @Builder
 @AllArgsConstructor

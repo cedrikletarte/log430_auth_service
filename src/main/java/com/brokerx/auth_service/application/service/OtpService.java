@@ -41,9 +41,7 @@ public class OtpService implements OtpUseCase {
 
     private final SecureRandom secureRandom = new SecureRandom();
 
-    /**
-     * Generates and sends a 6-digit OTP code to the user's email for verification.
-     */
+    /* Generates and sends a 6-digit OTP code to the user's email for verification. */
     @Transactional
     public void sendOtp(User user) {
         if (otpCache.hasOtp(user.getEmail())) {
@@ -67,9 +65,7 @@ public class OtpService implements OtpUseCase {
         });
     }
 
-    /**
-     * Verifies the provided OTP code and activates the user account if valid.
-     */
+    /* Verifies the provided OTP code and activates the user account if valid. */
     @Override
     @Transactional
     public LoginSuccess verifyOtp(OtpCommand request, String ipAddress, String userAgent) {
@@ -105,9 +101,7 @@ public class OtpService implements OtpUseCase {
         return buildAuthResponse(updatedUser, ipAddress, userAgent);
     }
 
-    /**
-     * Creates a successful login response with JWT access token for the authenticated user.
-     */
+    /* Creates a successful login response with JWT access token for the authenticated user. */
     private LoginSuccess buildAuthResponse(User user, String ipAddress, String userAgent) {
         var accessToken = jwtService.generateToken(user);
         return LoginSuccess.builder()

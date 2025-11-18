@@ -17,6 +17,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
+/* Entity representing a refresh token. */
 @Data
 @Builder
 @AllArgsConstructor

@@ -21,9 +21,7 @@ public class ApplicationConfig {
 
     private final UserRepositoryAdapter userRepositoryAdapter;
 
-    /**
-     * Configures the user details service to load user information by email for authentication.
-     */
+    /* Configures the user details service to load user information by email for authentication. */
     @Bean
     UserDetailsService userDetailsService() {
         return username -> userRepositoryAdapter.findByEmail(username)
@@ -31,17 +29,13 @@ public class ApplicationConfig {
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
     }
 
-    /**
-     * Provides a BCrypt password encoder bean for secure password hashing.
-     */
+    /* Provides a BCrypt password encoder bean for secure password hashing. */
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    /**
-     * Provides a secure random number generator bean for cryptographic operations.
-     */
+    /* Provides a secure random number generator bean for cryptographic operations. */
     @Bean
     SecureRandom secureRandom() {
         return new SecureRandom();

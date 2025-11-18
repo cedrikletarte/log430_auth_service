@@ -16,25 +16,19 @@ public class RedisOtpCacheAdapter implements OtpCachePort {
     
     private final StringRedisTemplate redisTemplate;
 
-    /**
-     * Constructs a RedisOtpCacheAdapter with the Redis template for OTP cache operations.
-     */
+    /* Constructs a RedisOtpCacheAdapter with the Redis template for OTP cache operations. */
     public RedisOtpCacheAdapter(StringRedisTemplate redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
-    /**
-     * Stores an OTP code in Redis cache with the specified time-to-live duration.
-     */
+    /* Stores an OTP code in Redis cache with the specified time-to-live duration. */
     @Override
     public void storeOtp(String email, String otpCode, Duration ttl) {
         String key = buildKey(email);
         redisTemplate.opsForValue().set(key, otpCode, ttl);
     }
 
-    /**
-     * Retrieves an OTP code from Redis cache for the specified email address.
-     */
+    /* Retrieves an OTP code from Redis cache for the specified email address. */
     @Override
     public Optional<String> getOtp(String email) {
         String key = buildKey(email);
@@ -42,18 +36,14 @@ public class RedisOtpCacheAdapter implements OtpCachePort {
         return Optional.ofNullable(otp);
     }
 
-    /**
-     * Removes an OTP code from Redis cache for the specified email address.
-     */
+    /* Removes an OTP code from Redis cache for the specified email address. */
     @Override
     public void removeOtp(String email) {
         String key = buildKey(email);
         redisTemplate.delete(key);
     }
 
-    /**
-     * Gets the remaining time in seconds before the OTP expires for the specified email.
-     */
+    /* Gets the remaining time in seconds before the OTP expires for the specified email. */
     @Override
     public long getRemainingTimeSeconds(String email) {
         String key = buildKey(email);
@@ -61,18 +51,14 @@ public class RedisOtpCacheAdapter implements OtpCachePort {
         return expire != null && expire > 0 ? expire : 0;
     }
 
-    /**
-     * Checks if an OTP code exists in Redis cache for the specified email address.
-     */
+    /* Checks if an OTP code exists in Redis cache for the specified email address. */
     @Override
     public boolean hasOtp(String email) {
         String key = buildKey(email);
         return Boolean.TRUE.equals(redisTemplate.hasKey(key));
     }
 
-    /**
-     * Builds the Redis key for storing OTP by prefixing the email with the OTP key prefix.
-     */
+    /* Builds the Redis key for storing OTP by prefixing the email with the OTP key prefix. */
     private String buildKey(String email) {
         return OTP_KEY_PREFIX + email;
     }

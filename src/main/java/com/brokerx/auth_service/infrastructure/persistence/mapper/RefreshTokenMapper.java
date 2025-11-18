@@ -10,16 +10,12 @@ public class RefreshTokenMapper {
 
     private final UserMapper userMapper;
 
-    /**
-     * Constructs a RefreshTokenMapper with user mapper dependency for handling user relationships.
-     */
+    /* Constructs a RefreshTokenMapper with user mapper dependency for handling user relationships. */
     public RefreshTokenMapper(UserMapper userMapper) {
         this.userMapper = userMapper;
     }
 
-    /**
-     * Converts a RefreshToken domain object to a RefreshTokenEntity for database persistence with shallow mapping of replacedBy to avoid recursion.
-     */
+    /* Converts a RefreshToken domain object to a RefreshTokenEntity for database persistence with shallow mapping of replacedBy to avoid recursion. */
     public RefreshTokenEntity toEntity(RefreshToken token) {
         if (token == null)
             return null;
@@ -44,9 +40,7 @@ public class RefreshTokenMapper {
                 .build();
     }
 
-    /**
-     * Converts a RefreshTokenEntity from database to a RefreshToken domain object with shallow mapping of replacedBy to avoid infinite recursion.
-     */
+    /* Converts a RefreshTokenEntity from database to a RefreshToken domain object with shallow mapping of replacedBy to avoid infinite recursion. */
     public RefreshToken toDomain(RefreshTokenEntity entity) {
         if (entity == null)
             return null;

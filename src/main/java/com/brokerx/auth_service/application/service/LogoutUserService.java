@@ -19,9 +19,7 @@ public class LogoutUserService implements LogoutUserUseCase {
 
     private final RefreshTokenService refreshTokenService;
 
-    /**
-     * Logs out a user by revoking their refresh token if it exists and is valid.
-     */
+    /* Logs out a user by revoking their refresh token if it exists and is valid. */
     @Override
     @Transactional
     public void logout(String refreshToken) {

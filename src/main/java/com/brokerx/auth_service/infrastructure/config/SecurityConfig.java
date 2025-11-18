@@ -19,17 +19,13 @@ public class SecurityConfig {
 
     private final GatewayHeaderAuthenticationFilter gatewayHeaderAuthenticationFilter;
 
-    /**
-     * Configures the authentication manager bean from the Spring Security configuration.
-     */
+    /* Configures the authentication manager bean from the Spring Security configuration. */
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
     }
 
-    /**
-     * Configures the security filter chain with JWT authentication, CORS, and public endpoints.
-     */
+    /* Configures the security filter chain with JWT authentication, CORS, and public endpoints. */
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http

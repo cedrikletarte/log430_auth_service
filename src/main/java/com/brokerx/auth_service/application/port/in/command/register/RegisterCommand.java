@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+/* Command object representing a user registration request. */
 @Getter
 @Builder
 @AllArgsConstructor

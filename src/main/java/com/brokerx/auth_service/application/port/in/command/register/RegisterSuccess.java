@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+/* Data object representing a successful registration response. */
 @Data
 @Builder
 @AllArgsConstructor
